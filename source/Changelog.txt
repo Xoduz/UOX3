@@ -1,3 +1,10 @@
+25/05/2024 - Dragon Slayer
+	Added special_moves.js There is 12 special aos moves you can find on uoguide.com
+	Added blockequip.js This script is used to block reqeuiping weapons.
+	Thanks to Xuri for making unequipattemp work for chars and not just items
+	Added OnCombatHit
+		-Triggers for character with event attached when someone has taken damage
+
 1/05/2024 - Dragon Slayer/Xuri
 	Fixed AutoUnequipAttempt function in clumsy.js, createfood.js level1target.js, will no longer fail on casting and return to hardcode.
 	Fixed createfood to check for reagents on cast.
