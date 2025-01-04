@@ -794,6 +794,7 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 	outStream << "Strength=" + std::to_string( strength ) + "," + std::to_string( temp_st2 ) + newLine;
 	outStream << "HitPoints=" + std::to_string( hitpoints ) + newLine;
 	outStream << "Race=" + std::to_string( race ) + newLine;
+	outStream << "RegenStats=" + std::to_string( GetHealthRegen() ) + "," + std::to_string( GetStaminaRegen() ) + "," + std::to_string( GetManaRegen() ) + newLine;
 	outStream << "Visible=" + std::to_string( visible ) + newLine;
 	outStream << "Disabled=" << ( IsDisabled() ? "1" : "0" ) << newLine;
 	outStream << "Damage=" + std::to_string( loDamage ) + "," + std::to_string( hiDamage ) + newLine;
@@ -998,6 +999,69 @@ SI16 CBaseObject::GetIntelligence( void ) const
 void CBaseObject::SetIntelligence( SI16 newValue )
 {
 	intelligence = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetHealthRegen()
+//|					CBaseObject::SetHealthRegen()
+//|	Date		-	29 April, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Health Regen of the object
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetHealthRegen( void ) const
+{
+	return healthRegen;
+}
+void CBaseObject::SetHealthRegen( SI16 newValue )
+{
+	healthRegen = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetStaminaRegen()
+//|					CBaseObject::SetStaminaRegen()
+//|	Date		-	29 April, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Stamina Regen of the object
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetStaminaRegen( void ) const
+{
+	return staminaRegen;
+}
+void CBaseObject::SetStaminaRegen( SI16 newValue )
+{
+	staminaRegen = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetManaRegen()
+//|					CBaseObject::SetManaRegen()
+//|	Date		-	29 April, 2024
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Mana Regen of the object
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetManaRegen( void ) const
+{
+	return manaRegen;
+}
+void CBaseObject::SetManaRegen( SI16 newValue )
+{
+	manaRegen = newValue;
 
 	if( CanBeObjType( OT_ITEM ))
 	{
@@ -1662,6 +1726,37 @@ void CBaseObject::IncIntelligence( SI16 toInc )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncHealthRegen()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Health Regen value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncHealthRegen( SI16 toInc )
+{
+	SetHealthRegen( healthRegen + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncStaminaRegen()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Stamina Regen value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncStaminaRegen( SI16 toInc )
+{
+	SetStaminaRegen( staminaRegen + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncManaRegen()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's Mana Regen value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncManaRegen( SI16 toInc )
+{
+	SetManaRegen( manaRegen + toInc );
+}
+
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::DumpFooter()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps out footer information so that a logical break between entries can
@@ -1982,6 +2077,13 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 					SetKarma( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
 					SetKills( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
 				}
+			}
+			else if( UTag == "REGENSTATS" )
+			{
+				SetHealthRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+				SetStaminaRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+				SetManaRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+				rValue = true;
 			}
 			else
 			{
@@ -2525,6 +2627,9 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetStrength( GetStrength() );
 	target->SetDexterity( GetDexterity() );
 	target->SetIntelligence( GetIntelligence() );
+	target->SetHealthRegen( GetHealthRegen() );
+	target->SetStaminaRegen( GetStaminaRegen() );
+	target->SetManaRegen( GetManaRegen() );
 	target->SetHP( GetHP() );
 	target->SetDir( GetDir() );
 	target->SetVisible( GetVisible() );

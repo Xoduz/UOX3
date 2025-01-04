@@ -3,6 +3,18 @@
 	Fixed createfood to check for reagents on cast.
 	Fixed many places missing proper null checks and refresh checks in magic js scripts.
 
+30/04/2024 - Dragon Slayer/Xuri/Maarc
+	Added three new DFN tags for NPCs and Items:
+		HEALTHREGEN=# 	// amount of health a character regains (continously) over time defined in regen timer settings
+		STAMINAREGEN=# 	// amount of stamina a character regains (continously) over time defined in regen timer settings
+		MANAREGEN=# 	// amount of mana a character regains (continously) over time defined in regen timer settings
+	These are also available as JS Engine object properties: .healthRegen, .staminaRegen and .manaRegen
+	Added AOS-specific formula for mana regeneration
+	Added INI Settings:
+		HEALTHREGENCAP=#  	// Max cap for Health Regeneration stat per character
+		STAMINAREGENCAP=# 	// Max cap for Stamina Regeneration stat per character
+		MANAREGENCAP=#		// Max cap for Mana Regeneration stat per character
+
 27/04/2024 - Dragon Slayer/Xuri
 	Fixed an issue where non-corpse containers - including treasure chests in dungeons - would decay and leave all their contents on the ground.
 	Converted LOOTDECAYSWITHCORPSE ini setting to two new settings, one for player corpses, one for NPC corpses:

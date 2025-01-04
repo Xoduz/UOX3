@@ -319,6 +319,15 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "RESISTPOISON":
 		socket.SysMessage( ourObj.Resist( 7 ));
 		break;
+	case "HEALTHREGEN":
+		socket.SysMessage( ourItem.healthRegen );
+		break;
+	case "STAMINAREGEN":
+		socket.SysMessage( ourItem.staminaRegen );
+		break;
+	case "MANAREGEN":
+		socket.SysMessage( ourItem.manaRegen );
+		break;
 	case "ARMORCLASS":
 	case "ARMOURCLASS":
 	case "AC":

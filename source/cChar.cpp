@@ -2920,6 +2920,10 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
+			IncHealthRegen( itemLayers[tLayer]->GetHealthRegen() );
+			IncStaminaRegen( itemLayers[tLayer]->GetStaminaRegen() );
+			IncManaRegen( itemLayers[tLayer]->GetManaRegen() );
+
 			if( toWear->IsPostLoaded() )
 			{
 				if( itemLayers[tLayer]->GetPoisoned() )
@@ -2979,6 +2983,11 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncStrength2( -itemLayers[Layer]->GetStrength2() );
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
+
+		IncHealthRegen( -itemLayers[Layer]->GetHealthRegen() );
+		IncStaminaRegen( -itemLayers[Layer]->GetStaminaRegen() );
+		IncManaRegen( -itemLayers[Layer]->GetManaRegen() );
+
 		if( itemLayers[Layer]->GetPoisoned() )
 		{
 			if( itemLayers[Layer]->GetPoisoned() > GetPoisoned() )
@@ -4719,6 +4728,21 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "REATTACKAT" )
 				{
 					SetReattackAt( static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "REGENHITS" )
+				{
+					SetHealthRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "REGENSTAM" )
+				{
+					SetStaminaRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "REGENMANA" )
+				{
+					SetManaRegen( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "RUNNINGSPEED" )

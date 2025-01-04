@@ -369,7 +369,10 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SECRETSHARDKEY"s, 346},
 	{"MOONGATEFACETS"s, 347},
 	{"AUTOUNEQUIPPEDCASTING"s, 348},
-	{"LOOTDECAYSWITHNPCCORPSE"s, 349}
+	{"LOOTDECAYSWITHNPCCORPSE"s, 349},
+	{"HEALTHREGENCAP"s, 350},
+	{"STAMINAREGENCAP"s, 351},
+	{"MANAREGENCAP"s, 352}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -717,6 +720,9 @@ auto CServerData::ResetDefaults() -> void
 	GlobalAttackSpeed( 1.0 );
 	NPCSpellCastSpeed( 1.0 );
 	FishingStaminaLoss( 2 );
+	HealthRegenCap( 18 );
+	StaminaRegenCap( 24 );
+	ManaRegenCap( 30 );
 	CombatArmorClassDamageBonus( false );
 	AlchemyDamageBonusEnabled( false );
 	AlchemyDamageBonusModifier( 5 );
@@ -2620,6 +2626,48 @@ auto CServerData::FishingStaminaLoss() const -> SI16
 auto CServerData::FishingStaminaLoss( SI16 value ) -> void
 {
 	fishingstaminaloss = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HealthRegenCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the cap for regen hits propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HealthRegenCap() const -> SI16
+{
+	return healthRegenCap;
+}
+auto CServerData::HealthRegenCap( SI16 value ) -> void
+{
+	healthRegenCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::StaminaRegenCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for regen stam propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::StaminaRegenCap() const -> SI16
+{
+	return staminaRegenCap;
+}
+auto CServerData::StaminaRegenCap( SI16 value ) -> void
+{
+	staminaRegenCap = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ManaRegenCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the for regen mana propertie
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ManaRegenCap() const -> SI16
+{
+	return manaRegenCap;
+}
+auto CServerData::ManaRegenCap( SI16 value ) -> void
+{
+	manaRegenCap = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5196,6 +5244,9 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "SHOWITEMRESISTSTATS=" << ( ShowItemResistStats() ? 1 : 0 ) << '\n';
 		ofsOutput << "SHOWWEAPONDAMAGETYPES=" << ( ShowWeaponDamageTypes() ? 1 : 0 ) << '\n';
 		ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<UI16>( WeaponDamageBonusType() ) << '\n';
+		ofsOutput << "HEALTHREGENCAP=" << HealthRegenCap() << '\n';
+		ofsOutput << "STAMINAREGENCAP=" << StaminaRegenCap() << '\n';
+		ofsOutput << "MANAREGENCAP=" << ManaRegenCap() << '\n';
 
 		ofsOutput << "}" << '\n';
 
@@ -6564,6 +6615,15 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 349:	 // LOOTDECAYSWITHNPCCORPSE
 			NpcCorpseLootDecay( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 350:	// HEALTHREGENCAP
+			HealthRegenCap( std::stof( value ));
+			break;
+		case 351:	// STAMINAREGENCAP
+			StaminaRegenCap( std::stof( value ));
+			break;
+		case 352:	// MANAREGENCAP
+			ManaRegenCap( std::stof( value ));
 			break;
 		default:
 			rValue = false;
