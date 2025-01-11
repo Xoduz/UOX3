@@ -151,6 +151,7 @@
 3217=npc/ai/guildmaster.js
 3218=npc/ai/monster/chaos_dragoon.js
 3219=npc/ai/shopkeeper.js
+3222=npc/ai/summon/animated.js
 
 // Magic Items
 3300=item/magic_items.js
@@ -427,6 +428,8 @@
 601=magic/level1targ.js
 602=magic/createfood.js
 700=magic/wand_item_id.js
+701=magic/necrospells.js
+702=magic/PaladinSpells.js
 }
 
 [SKILLUSE_SCRIPTS]
