@@ -37,6 +37,13 @@ function onLogin( socket, pChar )
     	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
     }
 
+
+	//Attach the special moves Book
+	if( !pChar.npc && !pChar.HasScriptTrigger( 7001 ))
+	{
+		pChar.AddScriptTrigger( 7001 );
+  }
+
 	// Re-adds Buff for disguise kit if player still has time left.
 	var currentTime = GetCurrentClock();
 	var disguiseKitTime = pChar.GetJSTimer( 1, 5023 );
@@ -80,6 +87,12 @@ function onCreatePlayer( pChar )
 		}
 
 		TriggerEvent( 8001, "GiveYoungPlayerItems", pChar.socket, pChar );
+	}
+
+	//Attach the special moves Book
+	if( !pChar.npc && !pChar.HasScriptTrigger( 7001 ))
+	{
+		pChar.AddScriptTrigger( 7001 );
 	}
 }
 
