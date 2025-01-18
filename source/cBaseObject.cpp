@@ -94,6 +94,7 @@ const SI16			DEFBASE_KILLS		= 0;
 const UI16			DEFBASE_RESIST 		= 0;
 const bool			DEFBASE_NAMEREQUESTACTIVE = 0;
 const ExpansionRuleset	DEFBASE_ORIGIN	= ER_UO;
+const SI16			DEFBASE_SWINGSPEEDINCREASE = 0;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
@@ -110,7 +111,8 @@ loDamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ),
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ),
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
-fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN )
+fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN ),
+swingSpeedIncrease( DEFBASE_SWINGSPEEDINCREASE )
 {
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
@@ -1569,6 +1571,27 @@ Point3_st CBaseObject::GetLocation( void ) const
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetSwingSpeedIncrease()
+//|					CBaseObject::SetSwingSpeedBonus()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the item's Swing Speed Bonus property (in percentage), which 
+//|					adjusts the base swing speed of the equipped weapon, or characters
+//o------------------------------------------------------------------------------------------------o
+SI16 CBaseObject::GetSwingSpeedIncrease( void ) const
+{
+	return swingSpeedIncrease;
+}
+void CBaseObject::SetSwingSpeedIncrease( SI16 newValue )
+{
+	swingSpeedIncrease = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetStrength2()
 //|					CBaseObject::SetStrength2()
 //o------------------------------------------------------------------------------------------------o
@@ -1659,6 +1682,16 @@ void CBaseObject::IncDexterity( SI16 toInc )
 void CBaseObject::IncIntelligence( SI16 toInc )
 {
 	SetIntelligence( intelligence + toInc );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::IncSwingSpeedIncrease()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Increments the object's swing speed bonus value
+//o------------------------------------------------------------------------------------------------o
+void CBaseObject::IncSwingSpeedIncrease( SI16 toInc )
+{
+	SetSwingSpeedIncrease( swingSpeedIncrease + toInc );
 }
 
 //o------------------------------------------------------------------------------------------------o

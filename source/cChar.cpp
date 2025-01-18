@@ -2398,6 +2398,7 @@ void CChar::CopyData( CChar *target )
 	target->SetDisabled( IsDisabled() );
 	target->SetCanHire( CanBeHired() );
 	target->SetCanTrain( CanTrain() );
+	target->SetSwingSpeedIncrease( GetSwingSpeedIncrease() );
 	target->SetLastOn( GetLastOn() );
 	target->SetLastOnSecs( GetLastOnSecs() );
 	target->SetPlayTime( GetPlayTime() );
@@ -2920,6 +2921,8 @@ bool CChar::WearItem( CItem *toWear )
 			IncDexterity2( itemLayers[tLayer]->GetDexterity2() );
 			IncIntelligence2( itemLayers[tLayer]->GetIntelligence2() );
 
+			IncSwingSpeedIncrease( itemLayers[tLayer]->GetSwingSpeedIncrease() );
+
 			if( toWear->IsPostLoaded() )
 			{
 				if( itemLayers[tLayer]->GetPoisoned() )
@@ -2979,6 +2982,9 @@ bool CChar::TakeOffItem( ItemLayers Layer )
 		IncStrength2( -itemLayers[Layer]->GetStrength2() );
 		IncDexterity2( -itemLayers[Layer]->GetDexterity2() );
 		IncIntelligence2( -itemLayers[Layer]->GetIntelligence2() );
+
+		IncSwingSpeedIncrease( -itemLayers[Layer]->GetSwingSpeedIncrease() );
+
 		if( itemLayers[Layer]->GetPoisoned() )
 		{
 			if( itemLayers[Layer]->GetPoisoned() > GetPoisoned() )
@@ -3134,6 +3140,7 @@ bool CChar::DumpBody( std::ostream &outStream ) const
 	//-------------------------------------------------------------------------------------------
 	outStream << "CanRun=" + std::to_string((( CanRun() && IsNpc() ) ? 1 : 0 )) + newLine;
 	outStream << "CanAttack=" + std::to_string(( GetCanAttack() ? 1 : 0 )) + newLine;
+	outStream << "SwingSpeedInc=" + std::to_string( GetSwingSpeedIncrease() ) + newLine;
 	outStream << "AllMove=" + std::to_string(( AllMove() ? 1 : 0 )) + newLine;
 	outStream << "IsNpc=" + std::to_string(( IsNpc() ? 1 : 0 )) + newLine;
 	outStream << "IsShop=" + std::to_string(( IsShop() ? 1 : 0 )) + newLine;
@@ -4815,6 +4822,11 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				{
 					SetSayColour( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
 					SetEmoteColour( static_cast<UI16>( std::stoul (oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "SWINGSPEEDINC" )
+				{
+					SetSwingSpeedIncrease( static_cast<SI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "STABLED" )
