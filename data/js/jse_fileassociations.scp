@@ -152,6 +152,7 @@
 3217=npc/ai/guildmaster.js
 3218=npc/ai/monster/chaos_dragoon.js
 3219=npc/ai/shopkeeper.js
+3222=npc/ai/summon/animated.js
 
 // Magic Items
 3300=item/magic_items.js
@@ -329,6 +330,14 @@
 6002=magic/helper/check_travel_restrictions.js
 6003=magic/helper/teleport_helper.js
 6004=magic/helper/check_reagents.js
+6101=magic/chivalry/cleansebyfire.js
+6103=magic/chivalry/consecratewepaon.js
+6102=magic/chivalry/closewounds.js
+6104=magic/chivalry/dispelevil.js
+6107=magic/chivalry/holylight.js
+6108=magic/chivalry/noblesacrifice.js
+6110=magic/chivalry/sacredjourney.js
+6111=magic/chivalry/consecratewepaonattached.js
 
 //-------------------------------------------
 // Combat Scripts [7000-7499]
@@ -432,6 +441,8 @@
 601=magic/level1targ.js
 602=magic/createfood.js
 700=magic/wand_item_id.js
+701=magic/necrospells.js
+800=magic/chivalry/paladinspells.js
 }
 
 [SKILLUSE_SCRIPTS]

@@ -52,14 +52,35 @@ JSBool CGuildsProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]
 
 JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	size_t spellId = JSVAL_TO_INT( id );
+	if( !JSVAL_IS_INT( id ))
+    {
+        ScriptError(cx, "Spells: Non-integer Spell ID provided");
+        *vp = JSVAL_NULL;
+        return JS_FALSE;
+    }
 
-	if( spellId >= Magic->spells.size() )
-	{
-		ScriptError( cx, oldstrutil::format( "Spells: Invalid Spell ID (%i) provided", spellId ).c_str() );
-		*vp = JSVAL_NULL;
-		return JS_FALSE;
-	}
+    int rawId = JSVAL_TO_INT( id );
+    //Console.Print(oldstrutil::format("DEBUG: Raw Spell ID passed to CSpellsProps_getProperty: %d", rawId));
+
+    // Reject negative IDs outright
+    if( rawId < 0 )
+    {
+        ScriptError( cx, oldstrutil::format("Spells: Negative Spell ID (%d) provided", rawId ).c_str() );
+        *vp = JSVAL_NULL;
+        return JS_FALSE;
+    }
+
+    size_t spellId = static_cast<size_t>( rawId );
+
+    // Preemptive range check for both regular and Paladin spells
+    if( spellId < 1 || spellId > 210 )
+    {
+        ScriptError( cx, oldstrutil::format( "Spells: Out-of-range Spell ID (%d) provided", rawId ).c_str());
+        *vp = JSVAL_NULL;
+        return JS_FALSE;
+    }
+
+    //Console.Print(oldstrutil::format("DEBUG: Adjusted Spell ID: %d", spellId));
 
 	CSpellInfo *mySpell = &Magic->spells[spellId];
 	if( mySpell == nullptr )
@@ -147,6 +168,11 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 			case CSP_ASH:				*vp = INT_TO_JSVAL( gPriv->Reagants().ash );			break;
 			case CSP_SHADE:				*vp = INT_TO_JSVAL( gPriv->Reagants().shade );			break;
 			case CSP_GARLIC:			*vp = INT_TO_JSVAL( gPriv->Reagants().garlic );			break;
+			case CSP_BATWING:			*vp = INT_TO_JSVAL( gPriv->Reagants().batwing );		break;
+			case CSP_DAEMONBLOOD:		*vp = INT_TO_JSVAL( gPriv->Reagants().daemonblood );	break;
+			case CSP_GRAVEDUST:			*vp = INT_TO_JSVAL( gPriv->Reagants().gravedust );		break;
+			case CSP_NOXCRYSTAL:		*vp = INT_TO_JSVAL( gPriv->Reagants().noxcrystal );		break;
+			case CSP_PIGIRON:			*vp = INT_TO_JSVAL( gPriv->Reagants().pigiron );		break;
 			case CSP_REQUIRETARGET:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireTarget() );		break;
 			case CSP_REQUIREITEM:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireItemTarget() );	break;
 			case CSP_REQUIRECHAR:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireCharTarget() );	break;
@@ -158,6 +184,7 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 			case CSP_RESISTABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->Resistable() );			break;
 			case CSP_SOUNDEFFECT:		*vp = INT_TO_JSVAL( gPriv->Effect() );					break;
 			case CSP_ENABLED:			*vp = BOOLEAN_TO_JSVAL( gPriv->Enabled() );				break;
+			case CSP_TITHING:			*vp = INT_TO_JSVAL( gPriv->Tithing() );					break;
 			default:																			break;
 		}
 	}
@@ -1938,6 +1965,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_TDEXTERITY:	*vp = INT_TO_JSVAL( gPriv->GetDexterity2() );		break;
 			case CCP_TINTELLIGENCE:	*vp = INT_TO_JSVAL( gPriv->GetIntelligence2() );	break;
 			case CCP_TSTRENGTH:		*vp = INT_TO_JSVAL( gPriv->GetStrength2() );		break;
+			case CCP_TITHING:		*vp = INT_TO_JSVAL( gPriv->GetTithing() );			break;
 			case CCP_POISON:		*vp = INT_TO_JSVAL( gPriv->GetPoisoned() );			break;
 			case CCP_LIGHTLEVEL:	*vp = INT_TO_JSVAL( gPriv->GetFixedLight() );		break;
 			case CCP_VULNERABLE:	*vp = BOOLEAN_TO_JSVAL( !gPriv->IsInvulnerable() );	break;
@@ -2436,7 +2464,8 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_FZ:			gPriv->SetFz( static_cast<SI08>( encaps.toInt() ));		break;
 			case CCP_TDEXTERITY:	gPriv->SetDexterity2( encaps.toInt() );					break;
 			case CCP_TINTELLIGENCE:	gPriv->SetIntelligence2( encaps.toInt() );				break;
-			case CCP_TSTRENGTH:		gPriv->SetStrength2( encaps.toInt() );					break;
+			case CCP_TSTRENGTH:		gPriv->SetStrength2( encaps.toInt() );
+			case CCP_TITHING:		gPriv->SetTithing( static_cast<SI32>( encaps.toInt() ));		break;					break;
 			case CCP_LIGHTLEVEL:
 				gPriv->SetFixedLight( static_cast<UI08>( encaps.toInt() ));
 				if( gPriv->GetSocket() != nullptr )
@@ -2460,7 +2489,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				gPriv->SetWar( encaps.toBool() );
 				Movement->CombatWalk( gPriv );
 				break;
-			case CCP_SPELLCAST:		gPriv->SetSpellCast( static_cast<SI08>( encaps.toInt() ));		break;
+			case CCP_SPELLCAST:		gPriv->SetSpellCast( static_cast<SI32>( encaps.toInt() ));		break;
 			case CCP_ISCASTING:
 			{
 				bool isCasting = encaps.toBool();

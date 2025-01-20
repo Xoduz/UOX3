@@ -2159,18 +2159,17 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 	{
 		if( target.ReceivedVersion() )
 		{
-			/*if( target.ClientVersionMajor() >= 6 )
+			if( target.ClientVersionMajor() >= 6 )
 			{
-				// Extended stats not implemented yet
 				extended3 = true;
 				extended4 = true;
 				extended5 = true;
-				extended6 = true;
-				pStream.ReserveSize( 121 );
-				pStream.WriteByte( 2, 121 );
-				Flag( 6 );
-			}*/
-			if( target.ClientVersionMajor() >= 5 )
+			    extended6 = true;
+			    pStream.ReserveSize( 121 );
+			    pStream.WriteByte( 2, 121 );
+			    Flag( 6 );
+			}
+			else if( target.ClientVersionMajor() >= 5 )
 			{
 				extended3 = true;
 				extended4 = true;
@@ -2199,9 +2198,8 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		{
 			// We haven't received any client details yet.. let's use default server settings
 
-			/*if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_HS ))
+			if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_HS ))
 			{
-				// Extended stats not implemented yet
 				extended3 = true;
 				extended4 = true;
 				extended5 = true;
@@ -2209,8 +2207,8 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 				pStream.ReserveSize( 121 );
 				pStream.WriteByte( 2, 121 );
 				Flag( 6 );
-			}*/
-			if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_ML ))
+			}
+			else if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_ML ))
 			{
 				extended3 = true;
 				extended4 = true;
@@ -2388,8 +2386,27 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			Luck( 0 );
 			DamageMin( Combat->CalcLowDamage( &toCopy ));
 			DamageMax( Combat->CalcHighDamage( &toCopy ));
-			TithingPoints( 0 );
+			TithingPoints( toCopy.GetTithing() );
 		}
+        if( extended6 )
+        {
+			PhysicalResistCap( cwmWorldState->ServerData()->PhysicalResistCap() );
+			FireResistCap( cwmWorldState->ServerData()->FireResistCap() );
+			ColdResistCap( cwmWorldState->ServerData()->ColdResistCap());
+			PoisonResistCap( cwmWorldState->ServerData()->PoisonResistCap() );
+			EnergyResistCap( cwmWorldState->ServerData()->EnergyResistCap() );
+
+			DefenseChanceIncrease( 0 );
+			DefenseChanceIncreaseCap( cwmWorldState->ServerData()->DefenseChanceIncreaseCap() );
+			HitChanceIncrease( 0 );
+			SwingSpeedIncrease( 0 );
+			DamageChanceIncrease( 0 );
+			LowerReagentCost( 0 );
+			SpellDamageIncrease( 0 );
+			FasterCastRecovery( 0 );
+			FasterCasting( 0 );
+			LowerManaCost( 0 );
+        }
 	}
 }
 void CPStatWindow::InternalReset( void )
@@ -2586,6 +2603,92 @@ void CPStatWindow::TithingPoints( UI32 value )
 	byteOffset += 4;
 }
 //extended4 end
+// extended6 start
+void CPStatWindow::PhysicalResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value);
+	byteOffset += 2;
+}
+void CPStatWindow::FireResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value);
+	byteOffset += 2;
+}
+void CPStatWindow::ColdResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
+}
+void CPStatWindow::PoisonResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
+}
+void CPStatWindow::EnergyResistCap( UI16 value )
+{
+	pStream.WriteShort( byteOffset, value );
+	byteOffset += 2;
+}
+
+void CPStatWindow::DefenseChanceIncrease(UI16 value)
+{
+    pStream.WriteShort(byteOffset, value);
+    byteOffset += 2;
+}
+
+void CPStatWindow::DefenseChanceIncreaseCap(UI16 value)
+{
+    pStream.WriteShort(byteOffset, value);
+    byteOffset += 2;
+}
+
+void CPStatWindow::HitChanceIncrease(UI16 value)
+{
+    pStream.WriteShort(byteOffset, value);
+    byteOffset += 2;
+}
+
+void CPStatWindow::SwingSpeedIncrease(UI16 value)
+{
+    pStream.WriteShort(byteOffset, value);
+    byteOffset += 2;
+}
+
+void CPStatWindow::DamageChanceIncrease(UI16 value)
+{
+    pStream.WriteShort(byteOffset, value);
+    byteOffset += 2;
+}
+
+void CPStatWindow::LowerReagentCost(UI16 value)
+{
+    pStream.WriteShort(byteOffset, value);
+    byteOffset += 2;
+}
+
+void CPStatWindow::SpellDamageIncrease(UI16 value)
+{
+    pStream.WriteShort(byteOffset, value);
+    byteOffset += 2;
+}
+
+void CPStatWindow::FasterCastRecovery(UI16 value)
+{
+    pStream.WriteShort(byteOffset, value);
+    byteOffset += 2;
+}
+
+void CPStatWindow::FasterCasting(UI16 value)
+{
+    pStream.WriteShort(byteOffset, value);
+    byteOffset += 2;
+}
+
+void CPStatWindow::LowerManaCost(UI16 value)
+{
+    pStream.WriteShort(byteOffset, value);
+    byteOffset += 2;
+}
 
 //o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIdleWarning()
@@ -6936,37 +7039,83 @@ void CPSendGumpMenu::Log( std::ostream &outStream, bool fullHeader )
 //|								second bit of first byte = spell #2
 //|								first bit of second byte = spell #8, etc
 //o------------------------------------------------------------------------------------------------o
-void CPNewSpellBook::InternalReset( void )
+void CPNewSpellBook::InternalReset( CItem &obj )
 {
-	pStream.ReserveSize( 23 );
-	pStream.WriteByte( 0, 0xBF ); //Main packet
-	pStream.WriteShort( 1, 23 );
-	pStream.WriteShort( 3, 0x1B ); //Subcommand
-	pStream.WriteShort( 5, 0x01 );
-	pStream.WriteByte( 11, 0x0E ); // Graphic part I?
-	pStream.WriteByte( 12, 0xFA ); // Graphic part II?
-	pStream.WriteShort( 13, 1 );// Offset
+    // Reset the base buffer
+    CPUOXBuffer::InternalReset();
+
+	// Determine the offset based on book type
+    int offset = 1; // Default to regular spellbook
+    if( obj.GetType() == IT_PALADINBOOK )
+        offset = 201;
+    else if( obj.GetType() == IT_NECROBOOK )
+        offset = 101;
+
+    pStream.ReserveSize( 23 );
+    pStream.WriteByte( 0, 0xBF ); // Main packet
+    pStream.WriteShort( 1, 23 );
+    pStream.WriteShort( 3, 0x1B ); // Subcommand
+    pStream.WriteShort( 5, 0x01 );
+    pStream.WriteByte( 11, 0x0E ); // Graphic part I
+    pStream.WriteByte( 12, 0xFA ); // Graphic part II
+    pStream.WriteShort( 13, offset ); // Offset
 }
-void CPNewSpellBook::CopyData( CItem& obj )
+
+void CPNewSpellBook::CopyData( CItem &obj )
 {
-	pStream.WriteLong( 7, obj.GetSerial() );
-	for( UI08 i = 0; i < 64; ++i )
-	{
-		SI32 y = ( i % 8 );
-		SI32 x = 15 + static_cast<SI32>( i / 8 );
-		if( Magic->HasSpell( &obj, i ))
-		{
-			pStream.WriteByte( x, ( pStream.GetByte( x ) | static_cast<UI08>( power( 2, y ))));
-		}
-	}
+	// Determine the spell range and offset based on book type
+    int startSpell = 1, endSpell = 64;
+    if( obj.GetType() == IT_PALADINBOOK )
+    {
+        startSpell = 201;
+        endSpell = 210;
+    }
+    else if( obj.GetType() == IT_NECROBOOK )
+    {
+        startSpell = 101;
+        endSpell = 117;
+    }
+
+    int spellCount = endSpell - startSpell + 1;
+
+    // Calculate the total size dynamically based on spell count
+    int spellBytes = ( spellCount + 7 ) / 8; // Each byte holds 8 spells
+    int packetSize = 15 + spellBytes;
+
+    // Reserve space and write header
+    pStream.ReserveSize( packetSize );
+    pStream.WriteByte( 0, 0xBF );          // Packet ID
+    pStream.WriteShort( 1, packetSize );   // Packet size
+    pStream.WriteShort( 3, 0x1B );         // Subcommand
+    pStream.WriteShort( 5, 0x01 );         // Unknown, always 1
+    pStream.WriteLong( 7, obj.GetSerial() ); // Spellbook serial
+    pStream.WriteShort( 11, obj.GetId() );  // Graphic ID
+    pStream.WriteShort( 13, startSpell );   // Scroll offset (start spell ID)
+
+    // Initialize spell content bytes to 0
+    for( int i = 0; i < spellBytes; ++i )
+    {
+        pStream.WriteByte( 15 + i, 0x00 );
+    }
+
+    // Populate the spell content bitfield
+    for( int spellNum = startSpell; spellNum <= endSpell; ++spellNum )
+    {        
+        int spellIndex = spellNum - startSpell; // Adjust to 0-based index
+        int byteIndex = 15 + ( spellIndex / 8 );  // Byte position in the stream
+        int bitIndex = spellIndex % 8;         // Bit position within the byte
+
+        if( Magic->HasSpell( &obj, spellNum ))
+        {
+            // Set the corresponding bit in the spell content
+            pStream.WriteByte( byteIndex, pStream.GetByte( byteIndex ) | ( 1 << bitIndex ));
+        }
+    }
 }
-CPNewSpellBook::CPNewSpellBook()
-{
-	InternalReset();
-}
+
 CPNewSpellBook::CPNewSpellBook( CItem& obj )
 {
-	InternalReset();
+	InternalReset( obj );
 	CopyData( obj );
 }
 
