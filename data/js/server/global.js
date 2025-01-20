@@ -25,6 +25,12 @@ function onLogin( socket, pChar )
         pChar.AddScriptTrigger( 2508 );
     }
 
+	// Attach OnQuest Toggle
+	if(!pChar.HasScriptTrigger( 5805 ))
+	{
+		pChar.AddScriptTrigger( 5805 );
+	}
+
     if( pChar.account.isYoung )
     {
   		// Attach "Young" player script, if the account is young and does not have script
@@ -59,6 +65,9 @@ function onLogout( pSock, pChar )
 	pChar.SetTempTag( "toothach", null );
 	pChar.SetTempTag( "Acidity", null );
 
+	// Used to remove the tracking gump timer
+	pChar.KillJSTimer(1, 5803);
+
 	//Treasure Hunting Kill Event.
 	var dirtItem = CalcItemFromSer( parseInt( pChar.GetTempTag( "dirtMadeSer" )));
 	if( ValidateObject( dirtItem ))
@@ -80,6 +89,18 @@ function onCreatePlayer( pChar )
 		}
 
 		TriggerEvent( 8001, "GiveYoungPlayerItems", pChar.socket, pChar );
+	}
+}
+
+function onQuestGump( pUser ) 
+{
+	if( ValidateObject( pUser ) && !pUser.dead )
+	{
+		TriggerEvent( 5803, "QuestMenu", pUser );
+	}
+	else
+	{
+		pUser.SysMessage( "Something is wrong, pUser is not valid or is dead." );
 	}
 }
 
